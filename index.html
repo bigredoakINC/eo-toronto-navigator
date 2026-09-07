@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EO Toronto Navigator Program</title>
+  <style>
+    :root {
+      --eo-navy:#071B3F;
+      --eo-blue:#2452C9;
+      --eo-pink:#EE2F72;
+      --eo-peach:#F19A6B;
+      --eo-yellow:#F5D13F;
+      --eo-teal:#2FB39D;
+      --ink:#142033;
+      --muted:#667085;
+      --paper:#FFFFFF;
+      --wash:#F5F7FB;
+      --line:#E5EAF2;
+      --soft-blue:#EEF3FF;
+      --soft-pink:#FFF0F5;
+      --soft-teal:#ECF9F6;
+      --soft-yellow:#FFF9E7;
+      --shadow:0 18px 45px rgba(7,27,63,.08);
+    }
+
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0;
+      font-family:"Avenir Next", Avenir, Montserrat, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--ink);
+      background:linear-gradient(180deg,#ffffff 0,#f6f8fc 38%,#f8f9fc 100%);
+      line-height:1.55;
+    }
+
+    a { color:inherit; }
+    .page { max-width:1220px; margin:0 auto; padding:0 24px 72px; }
+
+    .brand-strip {
+      height:7px;
+      background:linear-gradient(90deg,var(--eo-pink) 0 22%,var(--eo-peach) 22% 42%,var(--eo-yellow) 42% 62%,var(--eo-teal) 62% 82%,var(--eo-blue) 82% 100%);
+      border-radius:0 0 8px 8px;
+      margin-bottom:22px;
+    }
+
+    .topbar {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:24px;
+      padding:6px 2px 22px;
+    }
+    .brand-lockup { display:flex; align-items:center; gap:13px; }
+    .mark {
+      width:48px; height:48px; position:relative; flex:0 0 48px;
+    }
+    .mark span { position:absolute; border-radius:50%; border-style:solid; background:transparent; }
+    .mark .r1 { width:46px;height:46px;left:1px;top:1px;border-width:5px;border-color:var(--eo-pink) transparent var(--eo-pink) var(--eo-pink); transform:rotate(-24deg); }
+    .mark .r2 { width:35px;height:35px;left:7px;top:7px;border-width:4px;border-color:var(--eo-peach) var(--eo-peach) transparent var(--eo-peach); transform:rotate(18deg); }
+    .mark .r3 { width:25px;height:25px;left:12px;top:12px;border-width:4px;border-color:var(--eo-yellow) transparent var(--eo-yellow) var(--eo-yellow); transform:rotate(62deg); }
+    .mark .r4 { width:15px;height:15px;left:17px;top:17px;border-width:4px;border-color:var(--eo-teal) var(--eo-teal) var(--eo-teal) transparent; transform:rotate(10deg); }
+    .brand-name { font-weight:800; letter-spacing:.01em; color:var(--eo-navy); }
+    .brand-sub { color:var(--muted); font-size:.84rem; margin-top:1px; }
+
+    .quicknav { display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; }
+    .quicknav a {
+      text-decoration:none;
+      font-weight:700;
+      font-size:.84rem;
+      color:#36506f;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:999px;
+      padding:7px 11px;
+    }
+    .quicknav a:hover { border-color:#cbd6e9; color:var(--eo-blue); }
+
+    .hero {
+      position:relative;
+      overflow:hidden;
+      background:var(--eo-navy);
+      color:#fff;
+      border-radius:28px;
+      padding:58px 56px 52px;
+      box-shadow:0 26px 70px rgba(7,27,63,.18);
+      isolation:isolate;
+    }
+    .hero:before {
+      content:"";
+      position:absolute;
+      inset:auto -5% -44% 34%;
+      height:300px;
+      background:
+        linear-gradient(8deg,transparent 0 23%,var(--eo-pink) 23% 28%,transparent 28% 34%,var(--eo-peach) 34% 39%,transparent 39% 45%,var(--eo-yellow) 45% 50%,transparent 50% 56%,var(--eo-teal) 56% 61%,transparent 61%);
+      opacity:.95;
+      transform:rotate(-2deg);
+      z-index:-1;
+    }
+    .hero-ring {
+      position:absolute; right:-84px; top:-78px; width:360px; height:360px; opacity:.48; z-index:-1;
+    }
+    .hero-ring i { position:absolute; border-radius:50%; border-style:solid; }
+    .hero-ring i:nth-child(1){inset:0;border-width:22px;border-color:var(--eo-pink) transparent var(--eo-pink) var(--eo-pink);transform:rotate(16deg)}
+    .hero-ring i:nth-child(2){inset:34px;border-width:20px;border-color:var(--eo-peach) var(--eo-peach) transparent var(--eo-peach);transform:rotate(48deg)}
+    .hero-ring i:nth-child(3){inset:68px;border-width:18px;border-color:var(--eo-yellow) transparent var(--eo-yellow) var(--eo-yellow);transform:rotate(88deg)}
+    .hero-ring i:nth-child(4){inset:100px;border-width:17px;border-color:var(--eo-teal) var(--eo-teal) var(--eo-teal) transparent;transform:rotate(24deg)}
+
+    .eyebrow { font-size:.78rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:#b9c8f8; }
+    h1 { margin:.45rem 0 .9rem; font-size:clamp(2.7rem,6vw,5.4rem); line-height:.95; letter-spacing:-.045em; max-width:760px; }
+    .hero .lead { max-width:780px; margin:0; font-size:1.15rem; color:#D9E2F5; }
+
+    .hero-meta { margin-top:28px; display:flex; flex-wrap:wrap; gap:10px; }
+    .pill {
+      display:inline-flex; align-items:center; gap:8px; border-radius:999px; padding:9px 13px; font-size:.86rem; font-weight:800;
+      border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.08); color:#fff;
+      backdrop-filter:blur(8px);
+    }
+    .pill.success { background:#EAF9F3; color:#126C56; border-color:transparent; }
+    .pill.success:before { content:"✓"; font-weight:900; }
+
+    .rock-callout {
+      margin-top:20px;
+      display:grid;
+      grid-template-columns:auto 1fr;
+      gap:14px;
+      align-items:start;
+      max-width:860px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:16px;
+      padding:16px 18px;
+    }
+    .rock-badge { width:34px;height:34px;border-radius:10px;background:var(--eo-pink);display:grid;place-items:center;font-weight:900; }
+    .rock-callout strong { display:block; margin-bottom:2px; }
+    .rock-callout span { color:#D6DEEF; font-size:.94rem; }
+
+    section { margin-top:46px; }
+    .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:18px; }
+    .section-kicker { color:var(--eo-pink); text-transform:uppercase; letter-spacing:.13em; font-weight:900; font-size:.72rem; margin-bottom:4px; }
+    .section-head h2 { margin:0; color:var(--eo-navy); font-size:clamp(1.65rem,3vw,2.15rem); letter-spacing:-.025em; }
+    .section-head p { margin:0; color:var(--muted); max-width:610px; }
+
+    .journey {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:0;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+    }
+    .journey-item { padding:26px 24px 24px; position:relative; min-height:205px; border-left:1px solid var(--line); }
+    .journey-item:first-child { border-left:0; }
+    .journey-item:before { content:""; position:absolute; left:0; top:0; right:0; height:6px; background:var(--accent); }
+    .journey-item:nth-child(1){--accent:var(--eo-pink);--soft:var(--soft-pink)}
+    .journey-item:nth-child(2){--accent:var(--eo-peach);--soft:#FFF4EE}
+    .journey-item:nth-child(3){--accent:var(--eo-yellow);--soft:var(--soft-yellow)}
+    .journey-item:nth-child(4){--accent:var(--eo-teal);--soft:var(--soft-teal)}
+    .journey-num { width:42px;height:42px;border-radius:13px;background:var(--soft);color:var(--accent);display:grid;place-items:center;font-weight:900;font-size:1rem;margin-bottom:16px; }
+    .journey-item h3 { margin:0 0 7px; color:var(--eo-navy); font-size:1.08rem; }
+    .journey-item p { margin:0; color:var(--muted); font-size:.94rem; }
+
+    .sourcing-wrap { display:grid; grid-template-columns:290px 1fr; gap:18px; align-items:stretch; }
+    .sourcing-aside {
+      border-radius:22px;
+      padding:28px;
+      color:white;
+      background:linear-gradient(160deg,var(--eo-blue),#17379b);
+      position:relative;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+    }
+    .sourcing-aside:after { content:""; position:absolute; width:180px;height:180px;border:22px solid rgba(255,255,255,.12);border-radius:50%;right:-75px;bottom:-75px; }
+    .sourcing-aside .big { font-size:3rem; font-weight:900; line-height:1; margin-bottom:8px; }
+    .sourcing-aside h3 { margin:0 0 8px; font-size:1.25rem; }
+    .sourcing-aside p { margin:0; color:#DCE5FF; font-size:.94rem; }
+
+    .sop { background:#fff; border:1px solid var(--line); border-radius:22px; overflow:hidden; box-shadow:var(--shadow); }
+    .sop-row { display:grid; grid-template-columns:190px 1fr; border-top:1px solid var(--line); }
+    .sop-row:first-child { border-top:0; }
+    .sop-phase { padding:20px 18px; font-weight:900; color:var(--eo-navy); background:#FBFCFE; }
+    .sop-phase small { display:block; margin-top:4px; color:var(--muted); font-weight:600; }
+    .sop-tasks { padding:18px 22px; }
+    .sop-tasks ol { margin:0; padding-left:22px; }
+    .sop-tasks li { margin:0 0 7px; }
+    .sop-tasks li:last-child { margin-bottom:0; }
+    .sop-tasks li::marker { color:var(--eo-pink); font-weight:900; }
+
+    .asset-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .asset-card {
+      --accent:var(--eo-blue);
+      position:relative;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:24px;
+      min-height:245px;
+      display:flex;
+      flex-direction:column;
+      box-shadow:0 10px 28px rgba(7,27,63,.05);
+      overflow:hidden;
+    }
+    .asset-card:before { content:""; position:absolute; left:0; top:0; bottom:0; width:6px; background:var(--accent); }
+    .asset-card:nth-child(1){--accent:var(--eo-pink)}
+    .asset-card:nth-child(2){--accent:var(--eo-blue)}
+    .asset-card:nth-child(3){--accent:var(--eo-yellow)}
+    .asset-card:nth-child(4){--accent:var(--eo-teal)}
+    .asset-card:nth-child(5){--accent:var(--eo-peach)}
+    .asset-card:nth-child(6){--accent:#6A5ACD}
+    .asset-icon { width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:#F5F7FB;color:var(--accent);font-weight:900;margin-bottom:17px;font-size:1.05rem; }
+    .asset-tag { color:var(--accent); font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; font-weight:900; }
+    .asset-card h3 { margin:7px 0 8px; color:var(--eo-navy); font-size:1.12rem; }
+    .asset-card p { margin:0 0 20px; color:var(--muted); font-size:.94rem; }
+    .actions { margin-top:auto; display:flex; gap:9px; flex-wrap:wrap; }
+
+    .btn {
+      appearance:none; border:0; cursor:pointer; text-decoration:none;
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:10px 14px; border-radius:10px; font-weight:850; font-size:.9rem;
+      background:var(--eo-navy); color:white; transition:.18s ease;
+    }
+    .btn:hover { transform:translateY(-1px); box-shadow:0 8px 18px rgba(7,27,63,.12); }
+    .btn.secondary { background:var(--soft-blue); color:var(--eo-blue); }
+    .btn.disabled { background:#F0F2F6; color:#98A2B3; pointer-events:none; box-shadow:none; }
+
+    .email-section {
+      display:grid;
+      grid-template-columns:320px 1fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    .email-intro {
+      background:linear-gradient(155deg,#FFF4EE,#FFF8F3);
+      border:1px solid #F7DDCF;
+      border-radius:22px;
+      padding:28px;
+      position:relative;
+      overflow:hidden;
+    }
+    .email-intro:after { content:""; position:absolute; width:160px;height:160px;border:20px solid rgba(238,47,114,.08);border-radius:50%;right:-62px;bottom:-68px; }
+    .email-intro .section-kicker { color:var(--eo-peach); }
+    .email-intro h3 { margin:0 0 8px; color:var(--eo-navy); font-size:1.35rem; }
+    .email-intro p { margin:0 0 18px; color:#765847; }
+    .email-shell { background:#fff; border:1px solid var(--line); border-radius:22px; padding:22px; box-shadow:var(--shadow); }
+    .email-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+    .email-toolbar span { color:var(--muted); font-size:.84rem; }
+    .copy-note { margin-left:8px; color:#11715a; font-weight:800; display:none; }
+    .email-box {
+      background:#F8FAFD;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:22px;
+      white-space:pre-wrap;
+      font-family:inherit;
+      color:#2A3547;
+      min-height:360px;
+    }
+
+    .handoff {
+      margin-top:46px;
+      background:var(--eo-navy);
+      color:#fff;
+      border-radius:22px;
+      padding:26px 28px;
+      display:grid;
+      grid-template-columns:auto 1fr;
+      gap:16px;
+      align-items:start;
+      position:relative;
+      overflow:hidden;
+    }
+    .handoff:after { content:""; position:absolute; left:0; right:0; bottom:0; height:5px; background:linear-gradient(90deg,var(--eo-pink),var(--eo-peach),var(--eo-yellow),var(--eo-teal),var(--eo-blue)); }
+    .handoff-icon { width:42px;height:42px;border-radius:13px;background:rgba(255,255,255,.12);display:grid;place-items:center;font-weight:900; }
+    .handoff strong { display:block; margin-bottom:4px; }
+    .handoff span { color:#D8E1F2; }
+
+    @media (max-width:960px) {
+      .quicknav { display:none; }
+      .journey { grid-template-columns:1fr 1fr; }
+      .journey-item:nth-child(3) { border-left:0; border-top:1px solid var(--line); }
+      .journey-item:nth-child(4) { border-top:1px solid var(--line); }
+      .asset-grid { grid-template-columns:1fr 1fr; }
+      .sourcing-wrap,.email-section { grid-template-columns:1fr; }
+      .sourcing-aside { min-height:180px; }
+    }
+
+    @media (max-width:640px) {
+      .page { padding:0 14px 48px; }
+      .hero { padding:38px 26px 34px; border-radius:22px; }
+      .hero-ring { width:240px;height:240px;right:-110px;top:-78px; }
+      .section-head { display:block; }
+      .section-head p { margin-top:7px; }
+      .journey,.asset-grid { grid-template-columns:1fr; }
+      .journey-item { border-left:0; border-top:1px solid var(--line); }
+      .journey-item:first-child { border-top:0; }
+      .sop-row { grid-template-columns:1fr; }
+      .sop-phase { border-bottom:1px solid var(--line); }
+      .email-toolbar { align-items:flex-start; flex-direction:column; }
+      .topbar { padding-bottom:16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="brand-strip"></div>
+
+    <div class="topbar">
+      <div class="brand-lockup">
+        <div class="mark" aria-hidden="true"><span class="r1"></span><span class="r2"></span><span class="r3"></span><span class="r4"></span></div>
+        <div>
+          <div class="brand-name">EO Toronto</div>
+          <div class="brand-sub">Integration · Navigator Program</div>
+        </div>
+      </div>
+      <nav class="quicknav" aria-label="Page navigation">
+        <a href="#program">Program</a>
+        <a href="#sourcing">Sourcing</a>
+        <a href="#assets">Assets</a>
+        <a href="#outreach">Outreach Email</a>
+      </nav>
+    </div>
+
+    <header class="hero">
+      <div class="hero-ring" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div class="eyebrow">EO Toronto · Integration</div>
+      <h1>Navigator Program</h1>
+      <p class="lead">Connect new members with experienced EO Toronto members so they integrate faster, build meaningful relationships, and access the people, events and opportunities most relevant to them.</p>
+      <div class="hero-meta">
+        <span class="pill success">Program Status: Launched</span>
+        <span class="pill">Repeatable annual process</span>
+        <span class="pill">30 / 60 / 90 integration tracking</span>
+      </div>
+      <div class="rock-callout">
+        <div class="rock-badge">✓</div>
+        <div>
+          <strong>Rock completed</strong>
+          <span>The program model, Navigator sourcing process, recruitment materials, tracking cadence and handoff process are now defined and ready to run.</span>
+        </div>
+      </div>
+    </header>
+
+    <section id="program">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">The model</div>
+          <h2>How the program works</h2>
+        </div>
+        <p>A simple operating rhythm the Integration Chair can repeat each year without rebuilding the program from scratch.</p>
+      </div>
+
+      <div class="journey">
+        <div class="journey-item"><div class="journey-num">1</div><h3>Source Navigators</h3><p>Use two years of chapter attendance data to identify active, experienced members who are already showing up.</p></div>
+        <div class="journey-item"><div class="journey-num">2</div><h3>Recruit + Match</h3><p>Invite the strongest candidates personally, then pair them with incoming members based on likely fit.</p></div>
+        <div class="journey-item"><div class="journey-num">3</div><h3>Track 30 / 60 / 90</h3><p>Monitor the first meeting, shared events, warm introductions and overall integration progress.</p></div>
+        <div class="journey-item"><div class="journey-num">4</div><h3>Reconnect Mid-Year</h3><p>Bring Navigators and new members together for a dinner focused on deeper EO value and new connections.</p></div>
+      </div>
+    </section>
+
+    <section id="sourcing">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Repeatable process</div>
+          <h2>Navigator sourcing + annual operating rhythm</h2>
+        </div>
+        <p>Attendance creates the objective shortlist. Judgment determines who should represent EO Toronto to a new member.</p>
+      </div>
+
+      <div class="sourcing-wrap">
+        <aside class="sourcing-aside">
+          <div class="big">2 yrs</div>
+          <h3>Start with actual engagement</h3>
+          <p>Ask Carolina for the previous two full years of event attendance, then rank members by total participation before applying the human filter.</p>
+        </aside>
+
+        <div class="sop">
+          <div class="sop-row">
+            <div class="sop-phase">Start of board year<small>Build the pool</small></div>
+            <div class="sop-tasks"><ol>
+              <li>Ask Carolina for member event attendance from the previous two full chapter years.</li>
+              <li>Rank members by total events attended across both years.</li>
+              <li>Remove non-renewed or inactive members and flag current board members.</li>
+              <li>Review top members for suitability: 2+ years in EO, reliable, welcoming, responsive and good at making introductions.</li>
+              <li>Create Priority A, B and backup Navigator candidates.</li>
+              <li>Send the Navigator outreach note with the one-page cheat sheet.</li>
+              <li>Confirm the active Navigator pool and how many new members each person can support.</li>
+            </ol></div>
+          </div>
+          <div class="sop-row">
+            <div class="sop-phase">As members join<small>Match + integrate</small></div>
+            <div class="sop-tasks"><ol start="8">
+              <li>Match the new member with an available Navigator based on likely fit, interests, experience and geography.</li>
+              <li>Send a joint introduction.</li>
+              <li>Track the first meeting, event attendance, introductions and 30/60/90 status.</li>
+            </ol></div>
+          </div>
+          <div class="sop-row">
+            <div class="sop-phase">Mid-year<small>Reconnect</small></div>
+            <div class="sop-tasks"><ol start="11">
+              <li>Host a Navigator + New Member dinner.</li>
+              <li>Use the dinner to uncover untapped EO opportunities, useful connections and members who may be drifting.</li>
+            </ol></div>
+          </div>
+          <div class="sop-row">
+            <div class="sop-phase">Year-end handoff<small>Make it sustainable</small></div>
+            <div class="sop-tasks"><ol start="13">
+              <li>Thank and recognize Navigators.</li>
+              <li>Review what worked and retain strong Navigators for the following year.</li>
+              <li>Hand off the attendance data, prospect list, outreach templates, cheat sheet and tracker to the next Integration Chair.</li>
+            </ol></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="assets">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Program toolkit</div>
+          <h2>Everything needed to run the program</h2>
+        </div>
+        <p>Replace the placeholder buttons with the live Google Drive, Docs or Sheets links once the final assets are stored.</p>
+      </div>
+
+      <div class="asset-grid">
+        <div class="asset-card">
+          <div class="asset-icon">01</div>
+          <div class="asset-tag">Navigator tool</div>
+          <h3>Navigator One-Pager</h3>
+          <p>Responsibilities, expectations, and the simple 1-2-3 Navigator commitment.</p>
+          <div class="actions"><a class="btn disabled" href="#" aria-disabled="true">Add one-pager link</a></div>
+        </div>
+
+        <div class="asset-card">
+          <div class="asset-icon">02</div>
+          <div class="asset-tag">Operating tool</div>
+          <h3>Navigator Tracker</h3>
+          <p>Track the Navigator pool, member matches, 30/60/90 milestones and current status.</p>
+          <div class="actions"><a class="btn disabled" href="#" aria-disabled="true">Add tracker link</a></div>
+        </div>
+
+        <div class="asset-card">
+          <div class="asset-icon">03</div>
+          <div class="asset-tag">Event tool</div>
+          <h3>Mid-Year Dinner Agenda</h3>
+          <p>A shared dinner for Navigators and new members focused on deeper connections and untapped EO value.</p>
+          <div class="actions"><a class="btn disabled" href="#" aria-disabled="true">Add dinner agenda link</a></div>
+        </div>
+
+        <div class="asset-card">
+          <div class="asset-icon">04</div>
+          <div class="asset-tag">Board + handoff</div>
+          <h3>Rock Completion & Operating Plan</h3>
+          <p>The full documented model showing the Rock is complete and the program is ready to run.</p>
+          <div class="actions"><a class="btn" href="EO_Toronto_Navigator_Program_Rock_Completion.docx">Open operating plan</a></div>
+        </div>
+
+        <div class="asset-card">
+          <div class="asset-icon">05</div>
+          <div class="asset-tag">Communication</div>
+          <h3>Navigator Outreach Email</h3>
+          <p>A ready-to-use, personal recruitment note for prospective Navigators.</p>
+          <div class="actions"><a class="btn secondary" href="#outreach">Jump to email</a></div>
+        </div>
+
+        <div class="asset-card">
+          <div class="asset-icon">06</div>
+          <div class="asset-tag">Future asset</div>
+          <h3>New Member + Navigator Intro</h3>
+          <p>Use a standard joint introduction once a Navigator match is confirmed.</p>
+          <div class="actions"><a class="btn disabled" href="#" aria-disabled="true">Add intro template link</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="outreach">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Ready to use</div>
+          <h2>Navigator outreach email</h2>
+        </div>
+        <p>Keep the invitation personal. The note explains the “why”; the one-pager explains the “how.”</p>
+      </div>
+
+      <div class="email-section">
+        <aside class="email-intro">
+          <div class="section-kicker">Recruitment approach</div>
+          <h3>Make it feel like recognition, not volunteering.</h3>
+          <p>Prospective Navigators should know they are being approached because they are active, trusted members who can help a new member feel connected quickly.</p>
+          <button class="btn" onclick="copyEmail()">Copy email</button><span id="copyNote" class="copy-note">Copied</span>
+        </aside>
+
+        <div class="email-shell">
+          <div class="email-toolbar">
+            <strong>Copy-paste template</strong>
+            <span>Personal invitation · cheat sheet attached</span>
+          </div>
+          <div class="email-box" id="outreachEmail">Subject: Would you be an EO Toronto Navigator?
+
+Hi [Name],
+
+I’m putting together this year’s EO Toronto Navigator group and wanted to ask if you’d be willing to participate.
+
+The Navigator Program pairs newer EO members with experienced members who can help them get connected to the chapter, meet the right people, understand the opportunities available to them and generally get more value from EO sooner.
+
+I’m reaching out to you specifically because you’ve been one of the more engaged members of the chapter, and I think you’d be a great person for a new member to have in their corner during their first year.
+
+The commitment is deliberately pretty light:
+
+• one coffee or meaningful conversation early on
+• attend a couple of EO events together
+• make a few thoughtful introductions
+• stay loosely connected through their first year
+
+I’ve attached a one-page Navigator cheat sheet that explains the role and expectations.
+
+The goal isn’t for you to mentor them or become responsible for their EO experience. It’s really just to be a familiar face, a connector and someone who can help them find their way into the chapter.
+
+Would you be open to being part of the Navigator group this year?
+
+Thanks — I’d really appreciate it.
+
+Lee</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="handoff">
+      <div class="handoff-icon">→</div>
+      <div>
+        <strong>For the next Integration Chair</strong>
+        <span>This page is the program home base. Keep the live asset links current, refresh the attendance ranking at the start of each board year, and use the same hub for sourcing, recruitment, tracking and handoff.</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function copyEmail() {
+      const text = document.getElementById('outreachEmail').innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+        const note = document.getElementById('copyNote');
+        note.style.display = 'inline';
+        setTimeout(() => note.style.display = 'none', 1800);
+      } catch (e) {
+        alert('Copy failed. Select the email text and copy it manually.');
+      }
+    }
+  </script>
+</body>
+</html>
